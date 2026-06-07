@@ -19,12 +19,12 @@
         toast.classList.remove('show');
     }
 
-    document.querySelectorAll('#mainDownload, #navDownload').forEach(btn => {
-        btn.addEventListener('click', e => {
-            e.preventDefault();
-            showToast();
-        });
-    });
+    // document.querySelectorAll('#mainDownload, #navDownload').forEach(btn => {
+    //     btn.addEventListener('click', e => {
+    //         e.preventDefault();
+    //         showToast();
+    //     });
+    // });
 
     toastClose.addEventListener('click', hideToast);
 
