@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatWave · refined messenger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ind: #4f46e5;
+            --ind-soft: #eef2ff;
+            --ind-mid: #6366f1;
+            --ind-deep: #3730a3;
+            --text: #0f172a;
+            --text-2: #475569;
+            --text-3: #94a3b8;
+            --bg: #fafbfc;
+            --bg-2: #f1f5f9;
+            --bg-3: #ffffff;
+            --border: rgba(15, 23, 42, 0.08);
+            --border-2: rgba(15, 23, 42, 0.13);
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow: 0 4px 16px rgba(15, 23, 42, 0.07), 0 1px 4px rgba(15, 23, 42, 0.04);
+            --shadow-lg: 0 12px 36px rgba(15, 23, 42, 0.1), 0 4px 12px rgba(15, 23, 42, 0.06);
+            --shadow-phone: 0 32px 60px rgba(15, 23, 42, 0.14), 0 8px 24px rgba(79, 70, 229, 0.12);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ind: #818cf8;
+                --ind-soft: rgba(99, 102, 241, 0.15);
+                --ind-mid: #6366f1;
+                --ind-deep: #a5b4fc;
+                --text: #f1f5f9;
+                --text-2: #94a3b8;
+                --text-3: #475569;
+                --bg: #0b0f17;
+                --bg-2: #131720;
+                --bg-3: #1a1f2e;
+                --border: rgba(255, 255, 255, 0.07);
+                --border-2: rgba(255, 255, 255, 0.12);
+                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+                --shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+                --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.4);
+                --shadow-phone: 0 32px 60px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(99, 102, 241, 0.2);
+            }
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ── UTILITIES ── */
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 20px;
+            }
+        }
+
+        .label {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ind);
+            margin-bottom: 10px;
+        }
+
+        .section-heading {
+            font-size: clamp(22px, 3vw, 30px);
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            line-height: 1.2;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .section-sub {
+            font-size: 15px;
+            color: var(--text-2);
+            line-height: 1.65;
+            max-width: 480px;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(250, 251, 252, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: box-shadow 0.2s;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            nav {
+                background: rgba(11, 15, 23, 0.85);
+            }
+        }
+
+        nav.scrolled {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--ind-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-logo-icon svg {
+            width: 18px;
+            height: 18px;
+            color: #fff;
+        }
+
+        .nav-logo-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.2px;
+        }
+
+        .ver-chip {
+            font-size: 10px;
+            font-family: 'DM Mono', monospace;
+            background: var(--ind-soft);
+            color: var(--ind);
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-ghost {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-2);
+            background: none;
+            border: 1px solid var(--border-2);
+            border-radius: 40px;
+            padding: 7px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-2);
+            color: var(--text);
+            border-color: var(--border-2);
+        }
+
+        .btn-ghost svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .btn-primary {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            background: var(--ind-mid);
+            border: none;
+            border-radius: 40px;
+            padding: 8px 18px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .btn-primary:hover {
+            background: var(--ind-deep);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-primary svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .btn-ghost {
+                display: none;
+            }
+        }
+
+        /* ── HERO ── */
+        .hero {
+            padding: 72px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: -120px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero-glow-2 {
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.06) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 48px;
+            align-items: center;
+        }
+
+        @media (max-width: 720px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-phone-col {
+                display: none;
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--bg-3);
+            border: 1px solid var(--border-2);
+            border-radius: 40px;
+            padding: 5px 13px 5px 8px;
+            font-size: 12px;
+            color: var(--text-2);
+            margin-bottom: 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+            flex-shrink: 0;
+        }
+
+        .hero-title {
+            font-size: clamp(32px, 5vw, 50px);
+            font-weight: 700;
+            letter-spacing: -0.7px;
+            line-height: 1.12;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .hero-title em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--ind-mid), #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            font-size: 16px;
+            color: var(--text-2);
+            line-height: 1.65;
+            max-width: 420px;
+            margin-bottom: 30px;
+        }
+
+        .hero-cta-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-download {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            background: var(--text);
+            border: none;
+            border-radius: 40px;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.18s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+        }
+
+        .btn-download svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btn-download {
+                background: var(--bg-3);
+                color: var(--text);
+                border: 1px solid var(--border-2);
+            }
+
+            .btn-download:hover {
+                background: #2a3040;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        .hero-meta {
+            font-size: 11px;
+            color: var(--text-3);
+            font-family: 'DM Mono', monospace;
+            margin-top: 13px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .hero-meta svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        /* ── PHONE MOCKUP ── */
+        .phone-wrap {
+            position: relative;
+        }
+
+        .phone-float {
+            animation: floatPhone 6s ease-in-out infinite;
+        }
+
+        @keyframes floatPhone {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .phone-outer {
+            width: 200px;
+            background: var(--bg-3);
+            border-radius: 36px;
+            padding: 10px;
+            border: 1.5px solid var(--border-2);
+            box-shadow: var(--shadow-phone);
+            position: relative;
+        }
+
+        .phone-notch {
+            width: 60px;
+            height: 6px;
+            background: var(--border-2);
+            border-radius: 10px;
+            margin: 0 auto 10px;
+        }
+
+        .phone-screen {
+            border-radius: 26px;
+            overflow: hidden;
+            background: var(--bg-3);
+            display: flex;
+            flex-direction: column;
+            min-height: 360px;
+        }
+
+        .ps-header {
+            background: var(--ind-mid);
+            padding: 14px 14px 12px;
+            color: #fff;
+        }
+
+        .ps-time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .ps-contact-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ps-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .ps-contact-info {}
+
+        .ps-cname {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ps-status {
+            font-size: 9px;
+            opacity: 0.75;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .ps-status-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #86efac;
+        }
+
+        .ps-body {
+            flex: 1;
+            padding: 12px 12px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            background: var(--bg);
+        }
+
+        .bubble {
+            padding: 7px 11px;
+            border-radius: 14px;
+            font-size: 10px;
+            line-height: 1.45;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .bubble-them {
+            background: var(--bg-3);
+            color: var(--text);
+            border-radius: 14px 14px 14px 4px;
+            border: 1px solid var(--border);
+        }
+
+        .bubble-me {
+            background: var(--ind-mid);
+            color: #fff;
+            border-radius: 14px 14px 4px 14px;
+            margin-left: auto;
+        }
+
+        .bubble-time {
+            font-size: 8px;
+            color: var(--text-3);
+            margin-top: 1px;
+        }
+
+        .bubble-time.right {
+            text-align: right;
+        }
+
+        .ps-input-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 12px 10px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+        }
+
+        .ps-input-mock {
+            flex: 1;
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 9px;
+            color: var(--text-3);
+        }
+
+        .ps-send {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--ind-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ps-send svg {
+            width: 13px;
+            height: 13px;
+            color: #fff;
+        }
+
+        .phone-glow-ring {
+            position: absolute;
+            inset: -20px;
+            border-radius: 50px;
+            background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.07) 0%, transparent 65%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ── DIVIDER ── */
+        .sec-divider {
+            height: 1px;
+            background: var(--border);
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        /* ── SECTION WRAPPER ── */
+        .section {
+            padding: 64px 0;
+        }
+
+        .section-sm {
+            padding: 40px 0;
+        }
+
+        /* ── FEATURES ── */
+        .feat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-top: 36px;
+        }
+
+        .feat-card {
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 22px 20px;
+            transition: all 0.2s;
+            cursor: default;
+        }
+
+        .feat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .feat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--ind-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .feat-icon svg {
+            width: 21px;
+            height: 21px;
+            color: var(--ind);
+        }
+
+        .feat-card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+            letter-spacing: -0.1px;
+        }
+
+        .feat-card p {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.55;
+        }
+
+        /* ── SCREENSHOTS ── */
+        .ss-section {
+            background: var(--bg-2);
+        }
+
+        .ss-scroll {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding: 4px 0 16px;
+            scrollbar-width: none;
+            margin-top: 32px;
+        }
+
+        .ss-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ss-item {
+            flex-shrink: 0;
+        }
+
+        .ss-frame {
+            width: 120px;
+            border-radius: 24px;
+            border: 1.5px solid var(--border-2);
+            aspect-ratio: 9/18;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s;
+        }
+
+        .ss-frame:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .ss-inner {
+            width: 100%;
+            height: 100%;
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .ss-bar {
+            height: 7px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .ss-bar-sm {
+            height: 7px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.06);
+            width: 60%;
+        }
+
+        .ss-avatar-row {
+            display: flex;
+            gap: 7px;
+            margin-top: 3px;
+        }
+
+        .ss-av {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.12);
+        }
+
+        .ss-pill {
+            height: 26px;
+            border-radius: 14px;
+            background: rgba(99, 102, 241, 0.25);
+            width: 80%;
+            margin-top: 4px;
+        }
+
+        .ss-a {
+            background: linear-gradient(150deg, #ede9fe, #ddd6fe);
+        }
+
+        .ss-b {
+            background: linear-gradient(150deg, #1e293b, #0f172a);
+        }
+
+        .ss-b .ss-bar {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .ss-b .ss-bar-sm {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .ss-b .ss-av {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .ss-b .ss-pill {
+            background: rgba(99, 102, 241, 0.5);
+        }
+
+        .ss-c {
+            background: linear-gradient(150deg, #fef9ee, #fef3c7);
+        }
+
+        .ss-d {
+            background: linear-gradient(150deg, #f0fdf4, #dcfce7);
+        }
+
+        .ss-d .ss-pill {
+            background: rgba(34, 197, 94, 0.25);
+        }
+
+        .ss-caption {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-3);
+        }
+
+        /* ── INSTALL ── */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 36px;
+        }
+
+        @media (max-width: 540px) {
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .step-card {
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-num {
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'DM Mono', monospace;
+            color: var(--ind);
+            background: var(--ind-soft);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+        }
+
+        .step-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: var(--ind-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+        }
+
+        .step-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--ind);
+        }
+
+        .step-card h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .step-card p {
+            font-size: 12px;
+            color: var(--text-2);
+            line-height: 1.5;
+        }
+
+        .install-note {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 13px;
+            color: var(--text-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .install-note svg {
+            width: 15px;
+            height: 15px;
+            color: #22c55e;
+        }
+
+        /* ── VERSION CARD ── */
+        .ver-section {
+            background: var(--bg-2);
+        }
+
+        .version-card {
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            transition: box-shadow 0.2s;
+        }
+
+        .version-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .ver-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ver-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--ind-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ver-icon svg {
+            width: 22px;
+            height: 22px;
+            color: var(--ind);
+        }
+
+        .ver-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .ver-sub {
+            font-size: 12px;
+            color: var(--text-3);
+            font-family: 'DM Mono', monospace;
+        }
+
+        .ver-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-latest {
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--ind-soft);
+            color: var(--ind);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+        }
+
+        .ver-note {
+            font-size: 13px;
+            color: var(--text-2);
+        }
+
+        .ver-changes {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .change-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-2);
+        }
+
+        .change-item svg {
+            width: 15px;
+            height: 15px;
+            color: #22c55e;
+            flex-shrink: 0;
+        }
+
+        .ver-stats {
+            display: flex;
+            gap: 0;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            width: 100%;
+        }
+
+        .ver-stat {
+            flex: 1;
+            text-align: center;
+            padding: 0 12px;
+        }
+
+        .ver-stat:not(:last-child) {
+            border-right: 1px solid var(--border);
+        }
+
+        .ver-stat-val {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.3px;
+            margin-bottom: 3px;
+        }
+
+        .ver-stat-lbl {
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 28px 0 32px;
+        }
+
+        .footer-inner {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            text-decoration: none;
+        }
+
+        .footer-brand-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: var(--ind-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-brand-icon svg {
+            width: 16px;
+            height: 16px;
+            color: #fff;
+        }
+
+        .footer-brand-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 6px;
+        }
+
+        .social-link {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-2);
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .social-link:hover {
+            background: var(--bg-2);
+            color: var(--ind);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .social-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .gh-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--text);
+            color: var(--bg);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .gh-link:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+
+        .gh-link svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .gh-link {
+                background: var(--bg-3);
+                color: var(--text);
+                border: 1px solid var(--border-2);
+            }
+        }
+
+        .footer-copy {
+            font-size: 12px;
+            color: var(--text-3);
+        }
+
+        /* ── DOWNLOAD TOAST ── */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--bg-3);
+            border: 1px solid var(--border-2);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            z-index: 200;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--ind-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-icon svg {
+            width: 18px;
+            height: 18px;
+            color: var(--ind);
+        }
+
+        .toast-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-3);
+            padding: 2px;
+        }
+
+        .toast-close:hover {
+            color: var(--text);
+        }
+
+        .toast-close svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ── ANIMATIONS ── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" />
+            </svg>
+        </div>
+        <div>
+            <div style="font-weight:700;margin-bottom:2px">Download started</div>
+            <div style="font-size:11px;color:var(--text-3);font-family:'DM Mono',monospace">ChatWave-v3.2.0-release.apk
+                · 34 MB</div>
+        </div>
+        <button class="toast-close" id="toastClose" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- NAV -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-inner">
+                <a href="#" class="nav-logo">
+                    <div class="nav-logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </div>
+                    <span class="nav-logo-name">ChatWave</span>
+                    <span class="ver-chip">v3.2</span>
+                </a>
+                <div class="nav-actions">
+                    <a href="https://github.com" class="btn-ghost" target="_blank">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                        </svg>
+                        GitHub
+                    </a>
+                    <a href="#" class="btn-primary" id="navDownload">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path
+                                d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" />
+                        </svg>
+                        Download
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-glow-2"></div>
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-left fade-in">
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        v3.2.0 stable · now available
+                    </div>
+                    <h1 class="hero-title">Conversations that feel<br><em>like home.</em></h1>
+                    <p class="hero-sub">A modern React Native messenger designed for clarity, warmth, and speed.
+                        Real-time chat, minimal footprint, and full privacy.</p>
+                    <div class="hero-cta-row">
+                        <a href="#" class="btn-download" id="mainDownload">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M17.523 8.049A7.004 7.004 0 0012 5a7 7 0 00-6.912 5.9A5 5 0 007 21h10a5 5 0 001.523-9.775v-.002A7.002 7.002 0 0017.523 8.05zM13 13.586V10h-2v3.586l-1.293-1.293-1.414 1.414L12 17.414l3.707-3.707-1.414-1.414L13 13.586z" />
+                            </svg>
+                            Download APK
+                        </a>
+                        <a href="https://github.com" class="btn-ghost" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                            </svg>
+                            View source
+                        </a>
+                    </div>
+                    <div class="hero-meta">
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            Signed release
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                            </svg>
+                            34 MB
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                                <path d="M12 18h.01" />
+                            </svg>
+                            Android 11+
+                        </span>
+                    </div>
+                </div>
+                <div class="hero-phone-col">
+                    <div class="phone-wrap">
+                        <div class="phone-float">
+                            <div class="phone-outer">
+                                <div class="phone-notch"></div>
+                                <div class="phone-screen">
+                                    <div class="ps-header">
+                                        <div class="ps-time">09:41</div>
+                                        <div class="ps-contact-row">
+                                            <div class="ps-avatar">AK</div>
+                                            <div class="ps-contact-info">
+                                                <div class="ps-cname">Alex Kim</div>
+                                                <div class="ps-status"><span class="ps-status-dot"></span>online</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ps-body">
+                                        <div>
+                                            <div class="bubble bubble-them">Hey! Are you free tonight?</div>
+                                            <div class="bubble-time">2:14 PM</div>
+                                        </div>
+                                        <div>
+                                            <div class="bubble bubble-me">Yes! 7pm works perfectly</div>
+                                            <div class="bubble-time right">2:15 PM</div>
+                                        </div>
+                                        <div>
+                                            <div class="bubble bubble-them">Great, see you then!</div>
+                                            <div class="bubble-time">2:15 PM</div>
+                                        </div>
+                                    </div>
+                                    <div class="ps-input-row">
+                                        <div class="ps-input-mock">Message Alex...</div>
+                                        <div class="ps-send">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2.5">
+                                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="phone-glow-ring"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- FEATURES -->
+    <section class="section fade-in">
+        <div class="container">
+            <div class="label">Features</div>
+            <div class="section-heading">Designed for connection</div>
+            <div class="feat-grid">
+                <div class="feat-card">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3>Blazing fast</h3>
+                    <p>Instant message delivery and real-time sync, optimized for any connection strength.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <h3>End-to-end encrypted</h3>
+                    <p>Your conversations stay private — no compromises, no backdoors, ever.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                        </svg>
+                    </div>
+                    <h3>Adaptive elegance</h3>
+                    <p>Seamless light/dark theme that follows your system preference automatically.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 18 22 12 16 6" />
+                            <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                    </div>
+                    <h3>React Native core</h3>
+                    <p>Native performance, fluid gestures, and consistent cross-platform UX.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- SCREENSHOTS -->
+    <section class="section ss-section fade-in">
+        <div class="container">
+            <div class="label">Gallery</div>
+            <div class="section-heading">Glance at the flow</div>
+            <div class="section-sub" style="margin-top:6px">Thoughtfully crafted screens for every part of your
+                messaging experience.</div>
+            <div class="ss-scroll">
+                <div class="ss-item">
+                    <div class="ss-frame ss-a">
+                        <div class="ss-inner">
+                            <div class="ss-bar"></div>
+                            <div class="ss-avatar-row">
+                                <div class="ss-av"></div>
+                                <div class="ss-av"></div>
+                                <div class="ss-av"></div>
+                            </div>
+                            <div class="ss-bar-sm"></div>
+                            <div class="ss-bar" style="width:85%"></div>
+                            <div class="ss-pill"></div>
+                            <div class="ss-bar-sm" style="width:50%"></div>
+                            <div class="ss-bar" style="width:70%"></div>
+                        </div>
+                    </div>
+                    <div class="ss-caption">Smart inbox</div>
+                </div>
+                <div class="ss-item">
+                    <div class="ss-frame ss-b">
+                        <div class="ss-inner">
+                            <div class="ss-bar"></div>
+                            <div class="ss-bar-sm"></div>
+                            <div class="ss-avatar-row">
+                                <div class="ss-av"></div>
+                            </div>
+                            <div class="ss-bar" style="width:90%"></div>
+                            <div class="ss-pill"></div>
+                            <div class="ss-bar" style="width:75%"></div>
+                            <div class="ss-bar-sm" style="width:45%"></div>
+                        </div>
+                    </div>
+                    <div class="ss-caption">Deep dark mode</div>
+                </div>
+                <div class="ss-item">
+                    <div class="ss-frame ss-c">
+                        <div class="ss-inner">
+                            <div class="ss-bar" style="width:60%"></div>
+                            <div class="ss-bar-sm"></div>
+                            <div style="height:52px;border-radius:12px;background:rgba(245,158,11,0.2);margin:4px 0">
+                            </div>
+                            <div class="ss-bar" style="width:80%"></div>
+                            <div class="ss-bar-sm" style="width:55%"></div>
+                        </div>
+                    </div>
+                    <div class="ss-caption">Stories &amp; moments</div>
+                </div>
+                <div class="ss-item">
+                    <div class="ss-frame ss-d">
+                        <div class="ss-inner">
+                            <div class="ss-bar"></div>
+                            <div class="ss-bar-sm" style="width:70%"></div>
+                            <div class="ss-pill" style="background:rgba(34,197,94,0.25)"></div>
+                            <div class="ss-bar" style="width:85%"></div>
+                            <div class="ss-bar-sm" style="width:40%"></div>
+                        </div>
+                    </div>
+                    <div class="ss-caption">Crystal voice notes</div>
+                </div>
+                <div class="ss-item">
+                    <div class="ss-frame" style="background:linear-gradient(150deg,#fce7f3,#fbcfe8)">
+                        <div class="ss-inner">
+                            <div class="ss-avatar-row">
+                                <div class="ss-av" style="background:rgba(236,72,153,0.2)"></div>
+                                <div class="ss-av" style="background:rgba(236,72,153,0.15)"></div>
+                            </div>
+                            <div class="ss-bar" style="background:rgba(236,72,153,0.15)"></div>
+                            <div class="ss-pill" style="background:rgba(236,72,153,0.2)"></div>
+                            <div class="ss-bar-sm" style="background:rgba(236,72,153,0.12)"></div>
+                        </div>
+                    </div>
+                    <div class="ss-caption">Group threads</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- INSTALL -->
+    <section class="section fade-in">
+        <div class="container">
+            <div class="label">Install</div>
+            <div class="section-heading">Get started in three steps</div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" />
+                        </svg>
+                    </div>
+                    <h4>Download APK</h4>
+                    <p>Secure, direct download. No Play Store account needed.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h4>Allow install</h4>
+                    <p>Enable "unknown sources" once in your Android settings.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </div>
+                    <h4>Sign &amp; connect</h4>
+                    <p>Create your account in under 30 seconds. No email required.</p>
+                </div>
+            </div>
+            <div class="install-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                Verified package — no Google Play required.
+            </div>
+        </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- VERSION -->
+    <section class="section-sm ver-section fade-in">
+        <div class="container">
+            <div class="version-card">
+                <div class="ver-left">
+                    <div class="ver-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M6 3v12M18 9a3 3 0 100-6 3 3 0 000 6zM6 21a3 3 0 100-6 3 3 0 000 6zM18 21v-6M18 9v3M6 15V9m0 0a3 3 0 100-6 3 3 0 000 6z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="ver-title">ChatWave v3.2.0 · stable</div>
+                        <div class="ver-sub">Build 242 · January 2025</div>
+                    </div>
+                </div>
+                <div class="ver-right">
+                    <span class="badge-latest">Latest</span>
+                    <span class="ver-note">Group voice rooms · 30% faster sync</span>
+                </div>
+                <div class="ver-changes">
+                    <div class="change-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Group voice rooms — up to 12 participants
+                    </div>
+                    <div class="change-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        30% faster message sync across all threads
+                    </div>
+                    <div class="change-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Redesigned notification center with smart grouping
+                    </div>
+                    <div class="change-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Android 14 compatibility verified and tested
+                    </div>
+                </div>
+                <div class="ver-stats">
+                    <div class="ver-stat">
+                        <div class="ver-stat-val">4.8</div>
+                        <div class="ver-stat-lbl">Avg rating</div>
+                    </div>
+                    <div class="ver-stat">
+                        <div class="ver-stat-val">18K+</div>
+                        <div class="ver-stat-lbl">Downloads</div>
+                    </div>
+                    <div class="ver-stat">
+                        <div class="ver-stat-val">34 MB</div>
+                        <div class="ver-stat-lbl">APK size</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="sec-divider"></div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+                <a href="#" class="footer-brand">
+                    <div class="footer-brand-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                    </div>
+                    <span class="footer-brand-name">ChatWave</span>
+                </a>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Discord">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                        </svg>
+                    </a>
+                </div>
+                <a href="https://github.com" class="gh-link" target="_blank">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                    </svg>
+                    ChatWave · open core
+                </a>
+                <div class="footer-copy">© 2025 ChatWave — private, modern, human.</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 10);
+            }, { passive: true });
+
+            const toast = document.getElementById('toast');
+            const toastClose = document.getElementById('toastClose');
+            let toastTimer;
+
+            function showToast() {
+                clearTimeout(toastTimer);
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 4500);
+            }
+
+            function hideToast() {
+                clearTimeout(toastTimer);
+                toast.classList.remove('show');
+            }
+
+            document.querySelectorAll('#mainDownload, #navDownload').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.preventDefault();
+                    showToast();
+                });
+            });
+
+            toastClose.addEventListener('click', hideToast);
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            document.querySelectorAll('.fade-in').forEach((el, i) => {
+                el.style.transitionDelay = (i * 0.06) + 's';
+                observer.observe(el);
+            });
+        })();
+    </script>
+</body>
+
+</html>
