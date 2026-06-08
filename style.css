@@ -139,8 +139,19 @@ nav.scrolled {
 }
 
 .nav-logo-icon {
-    width: 64px;
-    height: 64px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--ind-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-logo-icon svg {
+    width: 18px;
+    height: 18px;
+    color: #fff;
 }
 
 .nav-logo-name {
